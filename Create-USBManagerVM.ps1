@@ -184,6 +184,131 @@ Function Find-WinPEISO{
 # End-Function Find-WinPEISO
 #***************************
 
+#***************************
+# Function Add-USBController
+#***************************
+Function Add-USBController{
+    [CmdletBinding()]
+    Param($TgtVMName)
+
+    #get id of VM  
+    $vm = get-vm $TgtVMName  
+    $vmid = $vm.ID 
+
+    #Define the Spec for the USBController
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec 
+    $deviceCfg = New-Object VMware.Vim.VirtualDeviceConfigSpec
+    $deviceCfg.Operation = "add"
+    $deviceCfg.Device = New-Object VMware.Vim.VirtualUSBController
+    $deviceCfg.device.Key = -1
+    $deviceCfg.Device.Connectable = `
+    New-Object VMware.Vim.VirtualDeviceConnectInfo
+    $deviceCfg.Device.Connectable.StartConnected - $true
+    $deviceCfg.Device.Connectable.AllowGuestControl = $false
+    $deviceCfg.Device.Connectable.Connected = $true
+    $deviceCfg.Device.ControllerKey = 100
+    $deviceCfg.Device.BusNumber = -1
+    $deviceCfg.Device.autoConnectDevices = $true
+    $spec.DeviceChange += $deviceCfg 
+
+    #Apply the Spec to the Target VM 
+    $_this = Get-View -Id "$vmid"  
+    $_this.ReconfigVM_Task($spec) > $Null
+         
+}
+#*******************************
+# End-Function Add-USBController
+#*******************************
+
+#**********************
+# Function Add-USBStick
+#**********************
+Function Add-USBStick{
+    [CmdletBinding()]
+    Param($TgtVMName)
+    
+    #get id of VM  
+    $vm = get-vm $TgtVMName  
+    $vmid = $vm.ID
+
+    #create usb device and add it to the VM.  
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec  
+    $spec.deviceChange = New-Object VMware.Vim.VirtualDeviceConfigSpec[] (1)  
+    $spec.deviceChange[0] = New-Object VMware.Vim.VirtualDeviceConfigSpec  
+    $spec.deviceChange[0].operation = "add"  
+    $spec.deviceChange[0].device = New-Object VMware.Vim.VirtualUSB  
+    $spec.deviceChange[0].device.key = -100  
+    $spec.deviceChange[0].device.backing = New-Object VMware.Vim.VirtualUSBUSBBackingInfo  
+    $spec.deviceChange[0].device.backing.deviceName = "path:1/4"  
+    $spec.deviceChange[0].device.connectable = New-Object VMware.Vim.VirtualDeviceConnectInfo  
+    $spec.deviceChange[0].device.connectable.startConnected = $true  
+    $spec.deviceChange[0].device.connectable.allowGuestControl = $false  
+    $spec.deviceChange[0].device.connectable.connected = $true  
+    $spec.deviceChange[0].device.connected = $false  
+   
+    $_this = Get-View -Id "$vmid"  
+    $_this.ReconfigVM_Task($spec) > $Null
+
+    #and repeat for the other three physical USB Ports on the Hosts
+    #ugly but it should work
+
+    #create usb device 2 and add it to the VM.  
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec  
+    $spec.deviceChange = New-Object VMware.Vim.VirtualDeviceConfigSpec[] (1)  
+    $spec.deviceChange[0] = New-Object VMware.Vim.VirtualDeviceConfigSpec  
+    $spec.deviceChange[0].operation = "add"  
+    $spec.deviceChange[0].device = New-Object VMware.Vim.VirtualUSB  
+    $spec.deviceChange[0].device.key = -100  
+    $spec.deviceChange[0].device.backing = New-Object VMware.Vim.VirtualUSBUSBBackingInfo  
+    $spec.deviceChange[0].device.backing.deviceName = "path:1/5"  
+    $spec.deviceChange[0].device.connectable = New-Object VMware.Vim.VirtualDeviceConnectInfo  
+    $spec.deviceChange[0].device.connectable.startConnected = $true  
+    $spec.deviceChange[0].device.connectable.allowGuestControl = $false  
+    $spec.deviceChange[0].device.connectable.connected = $true  
+    $spec.deviceChange[0].device.connected = $false  
+   
+    $_this = Get-View -Id "$vmid"  
+    $_this.ReconfigVM_Task($spec) > $Null
+
+    #create usb device 3 and add it to the VM.  
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec  
+    $spec.deviceChange = New-Object VMware.Vim.VirtualDeviceConfigSpec[] (1)  
+    $spec.deviceChange[0] = New-Object VMware.Vim.VirtualDeviceConfigSpec  
+    $spec.deviceChange[0].operation = "add"  
+    $spec.deviceChange[0].device = New-Object VMware.Vim.VirtualUSB  
+    $spec.deviceChange[0].device.key = -100  
+    $spec.deviceChange[0].device.backing = New-Object VMware.Vim.VirtualUSBUSBBackingInfo  
+    $spec.deviceChange[0].device.backing.deviceName = "path:1/6"  
+    $spec.deviceChange[0].device.connectable = New-Object VMware.Vim.VirtualDeviceConnectInfo  
+    $spec.deviceChange[0].device.connectable.startConnected = $true  
+    $spec.deviceChange[0].device.connectable.allowGuestControl = $false  
+    $spec.deviceChange[0].device.connectable.connected = $true  
+    $spec.deviceChange[0].device.connected = $false  
+   
+    $_this = Get-View -Id "$vmid"  
+    $_this.ReconfigVM_Task($spec) > $Null
+
+    #create usb device 4 and add it to the VM.  
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec  
+    $spec.deviceChange = New-Object VMware.Vim.VirtualDeviceConfigSpec[] (1)  
+    $spec.deviceChange[0] = New-Object VMware.Vim.VirtualDeviceConfigSpec  
+    $spec.deviceChange[0].operation = "add"  
+    $spec.deviceChange[0].device = New-Object VMware.Vim.VirtualUSB  
+    $spec.deviceChange[0].device.key = -100  
+    $spec.deviceChange[0].device.backing = New-Object VMware.Vim.VirtualUSBUSBBackingInfo  
+    $spec.deviceChange[0].device.backing.deviceName = "path:1/7"  
+    $spec.deviceChange[0].device.connectable = New-Object VMware.Vim.VirtualDeviceConnectInfo  
+    $spec.deviceChange[0].device.connectable.startConnected = $true  
+    $spec.deviceChange[0].device.connectable.allowGuestControl = $false  
+    $spec.deviceChange[0].device.connectable.connected = $true  
+    $spec.deviceChange[0].device.connected = $false  
+   
+    $_this = Get-View -Id "$vmid"  
+    $_this.ReconfigVM_Task($spec) > $Null
+}
+#**********************
+# Function Add-USBStick
+#**********************
 
 #*******************
 # Function Create-VM
@@ -192,9 +317,16 @@ Function Create-VM{
     [CmdletBinding()]
     Param($TgtHost,$TgtVMName,$TgtDataStore)
     "Creating $TgtVMName on $TgtHost"
-    New-VM -VMHost $TgtHost -Name $TgtVMName -Datastore $TgtDataStore -MemoryMB 1024 -NumCpu 1 >$Null
+    New-VM -VMHost $TgtHost -Name $TgtVMName -Datastore $TgtDataStore -MemoryMB 1024 -NumCpu 1 -DiskMB 40960 >$Null
     "Setting NIC Type on $TgtVMName to E1000"
     Get-VM $TgtVMName | Get-NetworkAdapter | Set-NetworkAdapter -Type e1000 -Confirm:$false >$null
+    "Setting SCSI Controller to LSI SAS"
+    Get-ScsiController -VM $TgtVMName | Set-ScsiController -Type VirtualLsiLogicSAS -Confirm:$false > $null
+    "Adding USB Controller"
+    Add-USBController $TgtVMName
+    "Adding USB Stick (or 4)"
+    Add-USBStick $TgtVMName
+    
 }
 #***********************
 # End-Function Create-VM
